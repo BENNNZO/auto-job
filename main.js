@@ -8,7 +8,7 @@ const prompt = PromptSync();
 
 const LINKEDIN_EMAIL = process.env.LINKEDIN_EMAIL;
 const LINKEDIN_PASSWORD = process.env.LINKEDIN_PASSWORD;
-const JOB_SEARCH_URL = 'https://www.linkedin.com/jobs/search/?f_AL=true&geoId=103644278&keywords=front%20end%20web%20developer'; // URL for Easy Apply jobs
+const JOB_SEARCH_URL = 'https://www.linkedin.com/jobs/search/?f_AL=true&geoId=103644278&keywords=MERN Stack web developer'; // URL for Easy Apply jobs
 
 async function writeToFile(data, fileName) {
     try {
@@ -68,31 +68,35 @@ async function applyForEasyApplyJobs() {
     const browser = await puppeteer.launch({ headless: false, defaultViewport: { width: 1080, height: 1080 } });
     const page = await browser.newPage();
 
+    let applyList = []
+    let noApplyList = []
+
     try {
         await login(page);
 
-        let allJobLinks = await readArrayFromFile("jobs.txt");
-        // let pageIndex = 0;
-        // while (true) { // comment this while loop out when reading job links from a file, then put file contents into alljoblinks variable
-        //     try {
-        //         const currentPageUrl = `${JOB_SEARCH_URL}&start=${pageIndex * 25}`;
-        //         await page.goto(currentPageUrl, { waitUntil: 'load' });
+        // let allJobLinks = await readArrayFromFile("jobs.txt");
+        let allJobLinks = [];
+        let pageIndex = 0;
+        while (true) { // comment this while loop out when reading job links from a file, then put file contents into alljoblinks variable
+            try {
+                const currentPageUrl = `${JOB_SEARCH_URL}&start=${pageIndex * 25}`;
+                await page.goto(currentPageUrl, { waitUntil: 'load' });
 
-        //         const jobLinks = await getJobLinks(page);
-        //         if (jobLinks.length === 0) break; // No more job links, exit loop
+                const jobLinks = await getJobLinks(page);
+                if (jobLinks.length === 0) break; // No more job links, exit loop
 
-        //         allJobLinks = [...allJobLinks, ...jobLinks];
-        //         console.log(`Fetched ${jobLinks.length} job links from page ${pageIndex + 1}`);
+                allJobLinks = [...allJobLinks, ...jobLinks];
+                console.log(`Fetched ${jobLinks.length} job links from page ${pageIndex + 1}`);
 
-        //         pageIndex++;
-        //     } catch (pageError) {
-        //         console.error(`Error navigating to job listings page ${pageIndex}:`, pageError);
-        //         break;
-        //     }
-        // }
-        // 
-        // console.log(`Total job links fetched: ${allJobLinks.length}`);
-        // writeToFile(JSON.stringify(allJobLinks, null, 4), "jobs.txt")
+                pageIndex++;
+            } catch (pageError) {
+                console.error(`Error navigating to job listings page ${pageIndex}:`, pageError);
+                break;
+            }
+        }
+        
+        console.log(`Total job links fetched: ${allJobLinks.length}`);
+        writeToFile(JSON.stringify(allJobLinks, null, 4), "jobs.txt")
 
         // Process each job link and apply for Easy Apply jobs as needed
         for (let link of allJobLinks) {
@@ -111,20 +115,30 @@ async function applyForEasyApplyJobs() {
                         await submitButton.click();
                         await new Promise(resolve => setTimeout(resolve, 5000)); // Wait for the application to be submitted
                         console.log(`Applied for job: ${link}`);
-                    } else {
+                        applyList.push(link);
+                     } else {
                         console.log(`No submit button found for job: ${link}`);
+                        noApplyList.push(link);
                     }
                 } else {
                     console.log(`Easy Apply button not found for job: ${link}`);
+                    noApplyList.push(link);
                 }
             } catch (jobError) {
                 console.error(`Error applying for job ${link}:`, jobError);
+                noApplyList.push(link);
             }
         }
 
     } catch (error) {
         console.error('Error applying for jobs:', error);
     } finally {
+        console.log(`Applied for ${applyList.length}:`)
+        console.log(`Didn't apply for ${noApplyList.length}:`)
+
+        writeToFile(JSON.stringify(applyList, null, 4), "applied.txt")
+        writeToFile(JSON.stringify(noApplyList, null, 4), "no_apply.txt")
+
         await browser.close();
     }
 }

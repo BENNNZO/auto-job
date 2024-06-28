@@ -1,0 +1,19 @@
+[
+    "https://www.linkedin.com/jobs/view/3719683685/",
+    "https://www.linkedin.com/jobs/view/3942311584/",
+    "https://www.linkedin.com/jobs/view/3944478112/",
+    "https://www.linkedin.com/jobs/view/3948767416/",
+    "https://www.linkedin.com/jobs/view/3950361242/",
+    "https://www.linkedin.com/jobs/view/3962030753/",
+    "https://www.linkedin.com/jobs/view/3962040932/",
+    "https://www.linkedin.com/jobs/view/3959695541/",
+    "https://www.linkedin.com/jobs/view/3959943090/",
+    "https://www.linkedin.com/jobs/view/3961685139/",
+    "https://www.linkedin.com/jobs/view/3961683382/",
+    "https://www.linkedin.com/jobs/view/3961681441/",
+    "https://www.linkedin.com/jobs/view/3961681442/",
+    "https://www.linkedin.com/jobs/view/3961684216/",
+    "https://www.linkedin.com/jobs/view/3961678789/",
+    "https://www.linkedin.com/jobs/view/3961680543/",
+    "https://www.linkedin.com/jobs/view/3960908706/"
+]
